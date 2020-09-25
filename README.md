@@ -1,5 +1,8 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+To Run Locally, please install dependencies with npm install then run it with npm start.
+This app reads data from csv file and displays it, user can search data on the basis of item, date or pin code and can sort the data on the basis of date or pin code.
+
 ## Available Scripts
 
 In the project directory, you can run:
