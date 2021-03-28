@@ -11,6 +11,7 @@ const FilterData = () => {
   const [item, setItem] = useState("");
   const [sortedData, setSortedData] = useState();
   const [filteredData, setfilteredData] = useState([]);
+  const [toggleSort, setToggleSort] = useState(false);
 
   useEffect(() => {
     csv("./Data.csv").then((data) => {
@@ -19,35 +20,38 @@ const FilterData = () => {
   }, []);
 
   useEffect(() => {
-    const _filteredData = !!sortedData
-      ? sortedData.filter((d) => {
-          if (date !== "") return d.orderDate.trim().includes(date.trim());
-          else if (pin !== "")
-            return d.deliveryPincode.trim().includes(pin.trim());
-          else if (item !== "")
-            return d.items
-              .trim()
-              .toLowerCase()
-              .includes(item.trim().toLowerCase());
-          else return d.orderDate.trim().includes(date.trim());
-        })
-      : data.filter((d) => {
-          if (date !== "") return d.orderDate.trim().includes(date.trim());
-          else if (pin !== "")
-            return d.deliveryPincode.trim().includes(pin.trim());
-          else if (item !== "")
-            return d.items
-              .trim()
-              .toLowerCase()
-              .includes(item.trim().toLowerCase());
-          else return data;
-        });
+    const _filteredData =
+      !!sortedData && !!toggleSort
+        ? sortedData.filter((d) => {
+            if (date !== "") return d.orderDate.trim().includes(date.trim());
+            else if (pin !== "")
+              return d.deliveryPincode.trim().includes(pin.trim());
+            else if (item !== "")
+              return d.items
+                .trim()
+                .toLowerCase()
+                .includes(item.trim().toLowerCase());
+            else return d.orderDate.trim().includes(date.trim());
+          })
+        : data.filter((d) => {
+            if (date !== "") return d.orderDate.trim().includes(date.trim());
+            else if (pin !== "")
+              return d.deliveryPincode.trim().includes(pin.trim());
+            else if (item !== "")
+              return d.items
+                .trim()
+                .toLowerCase()
+                .includes(item.trim().toLowerCase());
+            else return data;
+          });
     setfilteredData(_filteredData);
   }, [date, pin, sortedData, data, item]);
 
   const compareDate = (a, b) => {
-    var keyA = new Date(a.orderDate);
-    var keyB = new Date(b.orderDate);
+    const keyASplit = a.orderDate.split("/");
+    const keyBSplit = b.orderDate.split("/");
+    var keyA = new Date(+keyASplit[2], keyASplit[1] - 1, +keyASplit[0]);
+    var keyB = new Date(+keyBSplit[2], keyBSplit[1] - 1, +keyBSplit[0]);
     if (keyA < keyB) return 1;
     else if (keyA > keyB) return -1;
     else return 0;
@@ -58,11 +62,14 @@ const FilterData = () => {
   };
 
   const sortDate = (filteredData) => {
-    setSortedData(filteredData.sort(compareDate));
+    const d = filteredData.sort(compareDate);
+    setSortedData(d);
+    setToggleSort(!toggleSort);
   };
 
   const sortPin = (filteredData) => {
     setSortedData(filteredData.sort(comparePin));
+    setToggleSort(!toggleSort);
   };
   return (
     <>
